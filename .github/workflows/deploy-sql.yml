@@ -27,20 +27,12 @@ jobs:
             --start-ip-address $RUNNER_IP \
             --end-ip-address $RUNNER_IP
 
-      - name: Add sqlcmd to PATH
-        run: |
-          echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
-          echo "/opt/mssql-tools18/bin" >> $GITHUB_PATH
-
       - name: Execute SQL Script
-        run: |
-          sqlcmd \
-            -S ${{ secrets.SQL_SERVER }} \
-            -d ${{ secrets.SQL_DB }} \
-            -U ${{ secrets.SQL_USER }} \
-            -P '${{ secrets.SQL_PASSWORD }}' \
-            -i sql/schema.sql \
-            -C
+        uses: azure/sql-action@v2
+        with:
+          connection-string: "Server=tcp:${{ secrets.SQL_SERVER }},1433;Initial Catalog=${{ secrets.SQL_DB }};User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+          path: 'sql/schema.sql'
+          action: 'run'
 
       - name: Remove Firewall Rule
         if: always()
