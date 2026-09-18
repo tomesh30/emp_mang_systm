@@ -27,8 +27,10 @@ jobs:
             --start-ip-address $RUNNER_IP \
             --end-ip-address $RUNNER_IP
 
-      - name: Install modern sqlcmd
-        run: dotnet tool install -g --version 1.0.8 sqlcmd
+      - name: Install sqlcmd
+        run: |
+          dotnet tool install --global Microsoft.Sqlcmd
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Execute SQL Script
         run: |
