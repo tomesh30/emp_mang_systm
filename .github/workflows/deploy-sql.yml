@@ -24,4 +24,3 @@ jobs:
             -U ${{ secrets.SQL_USER }} \
             -P ${{ secrets.SQL_PASSWORD }} \
             -i sql/schema.sql -C
-EOF
