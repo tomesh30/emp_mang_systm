@@ -27,12 +27,19 @@ jobs:
             --start-ip-address $RUNNER_IP \
             --end-ip-address $RUNNER_IP
 
+      - name: Install modern sqlcmd
+        run: dotnet tool install -g --version 1.0.8 sqlcmd
+
       - name: Execute SQL Script
-        uses: azure/sql-action@v2
-        with:
-          connection-string: "Server=tcp:${{ secrets.SQL_SERVER }},1433;Initial Catalog=${{ secrets.SQL_DB }};User ID=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-          path: 'sql/schema.sql'
-          action: 'run'
+        run: |
+          sqlcmd \
+            -S ${{ secrets.SQL_SERVER }} \
+            -d ${{ secrets.SQL_DB }} \
+            -U ${{ secrets.SQL_USER }} \
+            -P '${{ secrets.SQL_PASSWORD }}' \
+            -i sql/schema.sql \
+            --login-timeout 120 \
+            -C
 
       - name: Remove Firewall Rule
         if: always()
